@@ -1,0 +1,31 @@
+resource "azurerm_resource_group" "default" {
+  name      =  "k8s-test1-rg"
+  location  =  "East US 2"
+  tags = {
+     environment  = "Demo"
+  }
+}
+
+resource "azurerm_kubernetes_cluster" "default" {
+  name                = "k8s-test-aks"
+  location            = azurerm_resource_group.default.location
+  resource_group_name = azurerm_resource_group.default.name
+  dns_prefix          = "k8stest-k8s"
+  
+  default_node_pool {
+     name             = "defafult"
+     node_count       = 2
+     vm_size          = "Standard_d2_v2"
+     os_disk_size_gb  = 30
+  }
+  service_principal {
+    client_id     = "6f9d1404-8051-464b-a6bf-366de7caeb4f"
+    client_secret = var.client_secret
+  }
+  role_based_access_control {
+    enabled = true
+  }
+  tags = {
+    environment = "Demo"
+  }
+}
